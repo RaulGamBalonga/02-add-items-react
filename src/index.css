@@ -56,7 +56,7 @@ button:focus-visible {
 }
 
 input {
-  background: #222;
+  background: #f3efef;
   border-radius: 4px;
   cursor: default;
   border: 1px solid #555;
