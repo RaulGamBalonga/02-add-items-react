@@ -1,9 +1,11 @@
-import { useState } from 'react'
+
 import './App.css'
+import { Item } from './components/Item'
+import { useItems } from './hooks/useItems'
 
-type ItemId = `${string}-${string}-${string}-${string}-${string}`
+export type ItemId = `${string}-${string}-${string}-${string}-${string}`
 
-interface Item {
+export interface Item {
   id:ItemId
   timestamp: number
   text: string
@@ -25,7 +27,7 @@ interface Item {
 
 function App() {
 
- const [items, setItems] = useState<Item[]>([])
+  const {items,addItem, removeItem} = useItems()
 
  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
   event.preventDefault()
@@ -40,25 +42,14 @@ function App() {
   const isInput = input instanceof HTMLInputElement
   if(!isInput || input == null) return
 
-  const newItem: Item = {
-    id:crypto.randomUUID(),
-    text: input.value,
-    timestamp: Date.now()
-  }
-
-  setItems((prevItems) => {
-    return[...prevItems, newItem]
-  })
+  addItem(input.value)
 
   input.value = ''
 
  }
 
  const createHandleRemoveItem = (id: ItemId) => () => {
-  setItems(prevItems => {
-    return prevItems.filter(currentItem => currentItem.id !== id)
-  })
-
+  removeItem(id)
  }
 
   return (
@@ -89,15 +80,11 @@ function App() {
           </p>
           ) : (
           items.map(item => {
-            return (
-              <li key={item.id}> {/* no utilizar el indice como key! */}
-                {item.text}
-                <button onClick={createHandleRemoveItem(item.id)}>
-               
-                  Eliminar elemento
-                </button>
-              </li>
-            )
+            return <Item  
+            handleClick = {createHandleRemoveItem(item.id)}
+            {...item} 
+            key={item.id} 
+            />
           })
           )
          }
